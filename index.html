@@ -1,37 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name = "viewport" content = "width = device - width", initial-scale = 1.0">
-    <title> Weather App - samuelApp</title>
-    <link rel = "stylesheet" href = "style.css">
-
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App - samuelApp</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class= "card">
+<div class="card">
     <div class="search">
-        <input type="text" placeholder = "enter city name"
-        spellcheck = "false">
-        <button><img src="images/search.png"></button>
-
+        <input type="text" id="city-input" placeholder="Enter city name" spellcheck="false">
+        <button id="search-button"><img src="images/search.png" alt="Search"></button>
     </div>
     <div class="weather">
-        <img src="images/rain.png" class = "weather-icon">
+        <img src="images/rain.png" class="weather-icon" alt="Weather Icon">
         <h1 class="temp">16°C</h1>
         <h2 class="city">Mexico City</h2>
         <div class="details">
             <div class="col">
-                <img src="images/humidity.png">
+                <img src="images/humidity.png" alt="Humidity Icon">
                 <div>
                     <p class="humidity">50%</p>
                     <p>Humidity</p>
                 </div>
             </div>
             <div class="col">
-                <img src="images/wind.png">
+                <img src="images/wind.png" alt="Wind Icon">
                 <div>
-                    <p class= "wind"> 15 km/h</p>
+                    <p class="wind">15 km/h</p>
                     <p>Wind Speed</p>
                 </div>
             </div>
@@ -40,12 +36,39 @@
 </div>
 
 <script>
+const apiKey = "29575ae33532b519c9ad1ff393a707e1";
+const apiUrl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
 
-const apiKey = "0abfc6c09e21364e3b2a19042fa59fc8";
-const apiUrl = "https://api.openweathermap.org/data/2.5/weather?units=metric";
+async function checkWeather(city = 'bangalore') {
+    const response = await fetch(`${apiUrl}${city}&appid=${apiKey}`);
+    if (!response.ok) {
+        console.error('Error fetching weather data:', response.status);
+        return;
+    }
+    const data = await response.json();
+    console.log(data);
 
+    // Actualiza la interfaz con la información obtenida
+    document.querySelector('.temp').textContent = `${data.main.temp}°C`;
+    document.querySelector('.city').textContent = data.name;
+    document.querySelector('.humidity').textContent = `${data.main.humidity}%`;
+    document.querySelector('.wind').textContent = `${(data.wind.speed * 3.6).toFixed(1)} km/h`;
+}
+
+// Asegúrate de que el DOM esté completamente cargado antes de agregar el evento
+document.addEventListener('DOMContentLoaded', () => {
+    // Llama a la función por defecto
+    checkWeather();
+
+    // Manejar el botón de búsqueda
+    document.getElementById('search-button').addEventListener('click', () => {
+        const cityInput = document.getElementById('city-input').value;
+        if (cityInput) {
+            checkWeather(cityInput);
+        }
+    });
+});
 </script>
-
 
 </body>
 </html>
