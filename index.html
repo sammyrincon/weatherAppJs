@@ -39,6 +39,9 @@
 const apiKey = "29575ae33532b519c9ad1ff393a707e1";
 const apiUrl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
 
+const searchBox = document.querySelector(".search input");
+const searchBtn = document.querySelector(".search button");
+
 async function checkWeather(city = 'bangalore') {
     const response = await fetch(`${apiUrl}${city}&appid=${apiKey}`);
     if (!response.ok) {
@@ -48,21 +51,17 @@ async function checkWeather(city = 'bangalore') {
     const data = await response.json();
     console.log(data);
 
-    // Actualiza la interfaz con la información obtenida
-    document.querySelector('.temp').textContent = `${data.main.temp}°C`;
-    document.querySelector('.city').textContent = data.name;
-    document.querySelector('.humidity').textContent = `${data.main.humidity}%`;
-    document.querySelector('.wind').textContent = `${(data.wind.speed * 3.6).toFixed(1)} km/h`;
+    document.querySelector('.city').innerHTML = data.name;
+    document.querySelector('.temp').innerHTML = Math.round(data.main.temp) + "°C";
+    document.querySelector('.humidity').innerHTML = data.main.humidity + "%";
+    document.querySelector('.wind').innerHTML = (data.wind.speed * 3.6).toFixed(1) + " km/h"; // Convertir m/s a km/h
 }
 
-// Asegúrate de que el DOM esté completamente cargado antes de agregar el evento
 document.addEventListener('DOMContentLoaded', () => {
-    // Llama a la función por defecto
     checkWeather();
 
-    // Manejar el botón de búsqueda
-    document.getElementById('search-button').addEventListener('click', () => {
-        const cityInput = document.getElementById('city-input').value;
+    searchBtn.addEventListener('click', () => {
+        const cityInput = searchBox.value;
         if (cityInput) {
             checkWeather(cityInput);
         }
