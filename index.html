@@ -12,10 +12,10 @@
         <input type="text" id="city-input" placeholder="Enter city name" spellcheck="false">
         <button id="search-button"><img src="images/search.png" alt="Search"></button>
     </div>
-    <div class="weather">
+    <div class="weather" style="display: none;">
         <img src="images/rain.png" class="weather-icon" alt="Weather Icon">
         <h1 class="temp">16°C</h1>
-        <h2 class="city">Mexico City</h2>
+        <h2 class="city">New York</h2>
         <div class="details">
             <div class="col">
                 <img src="images/humidity.png" alt="Humidity Icon">
@@ -41,24 +41,23 @@ const apiUrl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q="
 
 const searchBox = document.querySelector(".search input");
 const searchBtn = document.querySelector(".search button");
-const weatherIcon = document.querySelector(".weather-icon");
 
-async function checkWeather(city = 'bangalore') {
+async function checkWeather(city = 'New York') {
     const response = await fetch(`${apiUrl}${city}&appid=${apiKey}`);
     if (!response.ok) {
         console.error('Error fetching weather data:', response.status);
         return;
     }
     const data = await response.json();
-    console.log(data);
 
     document.querySelector('.city').innerHTML = data.name;
     document.querySelector('.temp').innerHTML = Math.round(data.main.temp) + "°C";
     document.querySelector('.humidity').innerHTML = data.main.humidity + "%";
     document.querySelector('.wind').innerHTML = (data.wind.speed * 3.6).toFixed(1) + " km/h"; 
 
+    const weatherIcon = document.querySelector(".weather-icon");
     if(data.weather[0].main == "Clouds"){
-        weatherIcon.src = "images/clouds.png";
+        weatherIcon.src = "images/Clouds.png";
     }
     else if(data.weather[0].main == "Clear"){
         weatherIcon.src = "images/Clear.png";
@@ -72,15 +71,26 @@ async function checkWeather(city = 'bangalore') {
     else if(data.weather[0].main == "Mist"){
         weatherIcon.src = "images/Mist.png";
     }
+
+    document.querySelector(".weather").style.display = "block";
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    checkWeather();
+    document.querySelector(".weather").style.display = "none";
 
     searchBtn.addEventListener('click', () => {
         const cityInput = searchBox.value;
         if (cityInput) {
             checkWeather(cityInput);
+        }
+    });
+
+    searchBox.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            const cityInput = searchBox.value;
+            if (cityInput) {
+                checkWeather(cityInput);
+            }
         }
     });
 });
